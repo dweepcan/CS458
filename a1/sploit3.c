@@ -4,19 +4,23 @@
 
 int main(int argc, char const *argv[]) {
     char *line = NULL;
-    char *real = NULL;
-    int size = 37;
+    char *pass = NULL;
+    int size = 38;
     FILE *script;
     FILE *pass;
 
-    real = malloc(sizeof(char)*7);
+    pass = malloc(sizeof(char)*7);
     setenv("USER","root",1);
 
+    // Generate password and override the current user password
+    // Write the password from stdout to file
     system("/usr/local/bin/pwgen -w > pass");
     pass = fopen("pass","r");
 
+    // Read first line from file
     getline(&line,&size,pass);
-    strncpy(real, line+31, 6);
+    // Get the password by removing the "Generated password (length 6):" part
+    strncpy(pass, line+31, 6);
 
     script = fopen("script","w");
 
@@ -25,7 +29,7 @@ int main(int argc, char const *argv[]) {
     fprintf(script, "expect \"Password: \"\n");
     fprintf(script, "send ");
     fprintf(script, "\"");
-    fprintf(script, "%s",real);
+    fprintf(script, "%s", pass);
     fprintf(script, "\\r");
     fprintf(script, "\"");
     fprintf(script, "\n");
