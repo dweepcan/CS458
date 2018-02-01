@@ -4,12 +4,12 @@
 
 int main(int argc, char const *argv[]) {
     char *line = NULL;
-    char *pass = NULL;
+    char *real = NULL;
     int size = 38;
     FILE *script;
     FILE *pass;
 
-    pass = malloc(sizeof(char)*7);
+    real = malloc(sizeof(char)*7);
     setenv("USER","root",1);
 
     // Generate password and override the current user password
@@ -20,7 +20,7 @@ int main(int argc, char const *argv[]) {
     // Read first line from file
     getline(&line,&size,pass);
     // Get the password by removing the "Generated password (length 6):" part
-    strncpy(pass, line+31, 6);
+    strncpy(real, line+31, 6);
 
     script = fopen("script","w");
 
@@ -29,7 +29,7 @@ int main(int argc, char const *argv[]) {
     fprintf(script, "expect \"Password: \"\n");
     fprintf(script, "send ");
     fprintf(script, "\"");
-    fprintf(script, "%s", pass);
+    fprintf(script, "%s", real);
     fprintf(script, "\\r");
     fprintf(script, "\"");
     fprintf(script, "\n");
